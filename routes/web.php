@@ -5,6 +5,7 @@ use App\Models\Country;
 use App\Models\Category;
 use App\Models\Origin;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,17 @@ Route::get('/wines/{id}', function ($id) {
 });
 */
 
+Route::get('/wines/consulta', function () {
+    return $wines = DB::table('wines')
+    ->join('countries','wines.id_country','=','countries.id')
+    ->select('wines.cellar','countries.name')
+    ->where('wines.cellar','=','Tionio')
+    ->get();
+    //->select('name','cellar')->get();
+});
+
+
+
 Route::get('/wines', function () {
     return Wine::with('countries','categories','origins')->get();
 });
@@ -49,12 +61,16 @@ Route::get('/wines/{cellar}', function ($cellar) {
     return Wine::fcellar($cellar)->get();
 });
 
+
 /*
 Route::get('/wines/prueba/{vingate}', function ($vingate) {
     return Wine::fvintage($vingate)->get();
 });
 */
 
+
+
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
